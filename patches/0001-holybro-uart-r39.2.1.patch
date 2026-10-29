@@ -1,0 +1,31 @@
+--- a/hardware/nvidia/t23x/nv-public/nv-platform/tegra234-p3768-0000+p3767-xxxx-nv-common.dtsi	2026-10-29 23:26:40.447717212 +0100
++++ b/hardware/nvidia/t23x/nv-public/nv-platform/tegra234-p3768-0000+p3767-xxxx-nv-common.dtsi	2026-10-29 23:26:40.485917632 +0100
+@@ -13,6 +13,8 @@
+ 	aliases {
+ 		serial1 = &uarta;
+ 		serial2 = &uarte;
++		/* Holybro Pixhawk Jetson baseboard: UARTB as ttyTHS3 */
++		serial3 = "/bus@0/serial@3110000";
+ 	};
+ 
+ 	bpmp {
+@@ -39,6 +41,19 @@
+ 			status = "okay";
+ 		};
+ 
++		/* Holybro: UARTA (ttyTHS1, Pixhawk TELEM link) in PIO mode, no GPC-DMA */
++		serial@3100000 {
++			/delete-property/ dmas;
++			/delete-property/ dma-names;
++		};
++
++		/* Holybro: enable UARTB (ttyTHS3); pins are already muxed to uartb by the stock MB1 pinmux */
++		uartb: serial@3110000 {
++			compatible = "nvidia,tegra194-hsuart";
++			reset-names = "serial";
++			status = "okay";
++		};
++
+ 		i2c@3180000 {
+ 			status = "okay";
+ 		};
