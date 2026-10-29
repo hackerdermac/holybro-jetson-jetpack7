@@ -28,7 +28,7 @@ There are no bootloader or pinmux changes; NVIDIA's stock pinmux already routes 
 
 - **Linux PC with Docker.** NVIDIA's tools need an Ubuntu 20.04/22.04 host, so the flash runs in an `ubuntu:22.04` container. Tested on an Ubuntu 26.04 host.
 - **USB-C cable** from the Jetson's USB-C port to the PC.
-- **Downloads from NVIDIA** (not included here; NVIDIA's license doesn't allow redistribution). Save them to `~/jetson-jp7/dl/` and keep these names:
+- **Downloads from NVIDIA** (not included here; NVIDIA's license doesn't allow redistribution). Save them **directly into this repo folder**, next to this README, and keep these names (git ignores them):
 
 | File | Size | Needed for |
 |---|---|---|
@@ -38,7 +38,8 @@ There are no bootloader or pinmux changes; NVIDIA's stock pinmux already routes 
 
 ## Flashing
 
-All scripts take the work folder as an optional argument (default `~/jetson-jp7`).
+Run the scripts from the repo folder. They extract the BSP to `Linux_for_Tegra/` and the sources to `src/` inside it. Plan for
+about 30 GB of free space (`Linux_for_Tegra/` is 27 GB after a flash). The flash log is `flash.log`, with the password masked.
 
 ```bash
 scripts/prepare-l4t.sh      # extract the BSP, install the Holybro DTBs and board-conf line
@@ -113,6 +114,12 @@ patches/   device-tree patch for L4T R39.2.1
 dtb/       prebuilt patched DTBs + SHA256SUMS
 scripts/   prepare, build, flash, NetworkManager watcher, link test
 docs/      analysis of Holybro's JetPack 6.2.2 patch and the port
+
+Local only (git-ignored):
+*.tbz2             the NVIDIA downloads
+Linux_for_Tegra/   extracted BSP + rootfs, created by prepare-l4t.sh / flash.sh
+src/               extracted sources, created by build-dtbs.sh
+flash.log
 ```
 
 ## License

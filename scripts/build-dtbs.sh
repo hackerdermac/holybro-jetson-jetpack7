@@ -1,19 +1,19 @@
 #!/bin/bash
 # Rebuild the Holybro-patched Orin NX/Nano DTBs (dtb/) from the L4T R39.2.1 public sources.
-# Usage: scripts/build-dtbs.sh [WORK]   (WORK defaults to ~/jetson-jp7)
-# Needs: WORK/dl/public_sources.tbz2, WORK/Linux_for_Tegra (BSP, for its dtc), host cpp and patch.
+# Usage: scripts/build-dtbs.sh
+# Needs: public_sources.tbz2 in the repo folder, Linux_for_Tegra/ (BSP, for its dtc), host cpp and patch.
 set -euo pipefail
 REPO=$(cd "$(dirname "$0")/.." && pwd)
-WORK=${1:-$HOME/jetson-jp7}
-L4T=$WORK/Linux_for_Tegra
-SRC=$WORK/src
+L4T=$REPO/Linux_for_Tegra
+SRC=$REPO/src
+[ -f "$REPO/public_sources.tbz2" ] || { echo "put public_sources.tbz2 into $REPO"; exit 1; }
 DTC=$L4T/kernel/dtc
 [ -x "$DTC" ] || { echo "BSP not extracted: $DTC missing (run scripts/prepare-l4t.sh first)"; exit 1; }
 
 if [ ! -d "$SRC/stock/hardware" ]; then
   echo "extracting device-tree and kernel-include sources..."
   mkdir -p "$SRC/stock" "$SRC/kernel"
-  tar xjf "$WORK/dl/public_sources.tbz2" -C "$SRC" \
+  tar xjf "$REPO/public_sources.tbz2" -C "$SRC" \
     Linux_for_Tegra/source/kernel_oot_modules_src.tbz2 Linux_for_Tegra/source/kernel_src.tbz2
   tar xjf "$SRC/Linux_for_Tegra/source/kernel_oot_modules_src.tbz2" -C "$SRC/stock" hardware
   tar xjf "$SRC/Linux_for_Tegra/source/kernel_src.tbz2" -C "$SRC/kernel" --wildcards \

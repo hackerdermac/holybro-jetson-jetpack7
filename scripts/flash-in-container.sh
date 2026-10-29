@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs inside the Ubuntu 22.04 container started by scripts/flash.sh (/work = WORK, /repo = this repo).
+# Runs inside the Ubuntu 22.04 container started by scripts/flash.sh (/repo = this repo folder).
 # NVIDIA's flash tools support Ubuntu 20.04/22.04 hosts only; the container makes any newer host work.
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
@@ -9,10 +9,10 @@ echo "=== [1/6] container packages ==="
 apt-get update -qq
 apt-get install -y -qq sudo usbutils lbzip2 bzip2 tar python3 kmod iproute2 whiptail >/dev/null
 
-cd /work/Linux_for_Tegra
+cd /repo/Linux_for_Tegra
 if [ ! -d rootfs/usr ]; then
   echo "=== [2/6] extract rootfs ==="
-  tar -I lbzip2 -xpf ../dl/Tegra_Linux_Sample-Root-Filesystem_R39.2.1_aarch64.tbz2 -C rootfs/
+  tar -I lbzip2 -xpf ../Tegra_Linux_Sample-Root-Filesystem_R39.2.1_aarch64.tbz2 -C rootfs/
 fi
 
 echo "=== [3/6] flash prerequisites + apply_binaries ==="

@@ -1,6 +1,5 @@
-# Work folders and logs never belong in the repo (logs can contain the Jetson password)
+# NVIDIA downloads, extracted trees and logs stay local (logs can contain the Jetson password)
 *.log
 *.tbz2
-Linux_for_Tegra/
-dl/
-src/
+/Linux_for_Tegra/
+/src/

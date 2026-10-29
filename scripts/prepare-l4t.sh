@@ -1,17 +1,20 @@
 #!/bin/bash
 # Extract the L4T R39.2.1 BSP and apply the Holybro port: patched DTBs + board-conf overlay line.
-# Usage: scripts/prepare-l4t.sh [WORK]   (WORK defaults to ~/jetson-jp7)
-# Needs: WORK/dl/Jetson_Linux_R39.2.1_aarch64.tbz2. NVIDIA's originals are kept as *.stock.
+# Usage: scripts/prepare-l4t.sh
+# Needs: Jetson_Linux_R39.2.1_aarch64.tbz2 and Tegra_Linux_Sample-Root-Filesystem_R39.2.1_aarch64.tbz2
+# in the repo folder. The BSP is extracted to Linux_for_Tegra/; NVIDIA's originals are kept as *.stock.
 set -euo pipefail
 REPO=$(cd "$(dirname "$0")/.." && pwd)
-WORK=${1:-$HOME/jetson-jp7}
-L4T=$WORK/Linux_for_Tegra
+L4T=$REPO/Linux_for_Tegra
 
+for f in Jetson_Linux_R39.2.1_aarch64.tbz2 Tegra_Linux_Sample-Root-Filesystem_R39.2.1_aarch64.tbz2; do
+  [ -f "$REPO/$f" ] || { echo "put $f into $REPO"; exit 1; }
+done
 (cd "$REPO/dtb" && sha256sum -c --quiet SHA256SUMS)
 
 if [ ! -f "$L4T/flash.sh" ]; then
   echo "extracting BSP..."
-  tar -C "$WORK" -xjf "$WORK/dl/Jetson_Linux_R39.2.1_aarch64.tbz2"
+  tar -C "$REPO" -xjf "$REPO/Jetson_Linux_R39.2.1_aarch64.tbz2"
 fi
 ver=$(. "$L4T/nv_tegra/bsp_version" && echo "$BSP_VERSION")
 [ "$ver" = "39.2.1" ] || { echo "$L4T is L4T $ver, not R39.2.1"; exit 1; }
