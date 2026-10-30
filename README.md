@@ -2,7 +2,7 @@
 
 Flash **JetPack 7.2.1 (Jetson Linux R39.2.1, Ubuntu 24.04, kernel 6.8)** to a Jetson Orin NX on the
 [Holybro Pixhawk Jetson baseboard](https://docs.holybro.com/autopilot/pixhawk-baseboards/pixhawk-jetson-baseboard/flashing-guide),
-with Holybro's JetPack 6.2.2 board patch ported to R39.2.1.
+with Holybro's JetPack 6.2.2 board patch ported to R39.2.1. One deliberate difference: the UARTs keep DMA (see below).
 
 > **Not supported by Holybro.** Holybro supports JetPack 5.1.2–6.0 and 6.2.2 on this baseboard. This repo is an
 > unofficial port. It was tested on one Orin NX 16GB; see [Tested](#tested). If something doesn't work, reflash
@@ -13,13 +13,20 @@ with Holybro's JetPack 6.2.2 board patch ported to R39.2.1.
 Holybro's JetPack 6.2.2 patch (`holybro_jp622`) turned out to be a small change. The full analysis is in
 [docs/patch-analysis.md](docs/patch-analysis.md).
 
-| Change | Effect |
-|---|---|
-| UARTA `serial@3100000` without DMA | `/dev/ttyTHS1` (Pixhawk TELEM2) runs in PIO mode |
-| UARTB `serial@3110000` enabled | additional `/dev/ttyTHS3` |
-| `OVERLAY_DTB_FILE += imx219-dual.dtbo` in the board conf | dual IMX219 camera overlay loaded by default |
+| Change | Effect | vs. Holybro's 6.2.2 patch |
+|---|---|---|
+| UARTB `serial@3110000` enabled, with GPC-DMA | additional `/dev/ttyTHS3` | Holybro: enabled without DMA |
+| UARTA `serial@3100000` left as NVIDIA ships it, with DMA | `/dev/ttyTHS1` (Pixhawk TELEM2) uses DMA | Holybro: DMA removed (PIO) |
+| `OVERLAY_DTB_FILE += imx219-dual.dtbo` in the board conf | dual IMX219 camera overlay loaded by default | same |
 
 There are no bootloader or pinmux changes; NVIDIA's stock pinmux already routes UARTB.
+
+**Why DMA:** a benchmark of the PX4 uXRCE-DDS link ([docs/uxrce-dds-benchmark.md](docs/uxrce-dds-benchmark.md)) found no
+benefit from Holybro's PIO setting:
+- at 921600, DMA halves the agent's CPU load
+- at 1.5 Mbaud, PIO drops messages with ~115 ms round trips, while DMA runs at full rate with ~15 ms
+
+The same benchmark found UDP over Ethernet best overall for PX4 ↔ Jetson DDS.
 
 - [`patches/0001-holybro-uart-r39.2.1.patch`](patches/0001-holybro-uart-r39.2.1.patch): the device-tree change against R39.2.1 sources.
 - [`dtb/`](dtb/): the 10 patched Orin NX/Nano DTBs, prebuilt. Only the Holybro change differs from NVIDIA's DTBs; [`scripts/build-dtbs.sh`](scripts/build-dtbs.sh) rebuilds them and checks that.
@@ -82,7 +89,7 @@ scripts/test-pixhawk-links.sh
 ```
 
 It checks:
-- **Device tree:** ttyTHS1 and ttyTHS3 without DMA.
+- **Device tree:** ttyTHS1, ttyTHS2 and ttyTHS3 enabled, all with DMA (`dma=yes`).
 - **Ethernet:** gives the Jetson a temporary 192.168.128.1 and pings the Pixhawk at 192.168.128.3 (adjust with `PX4_IP` / `AGENT_IP`). It also counts the Pixhawk's DDS and MAVLink packets.
 - **Serial:** listens on ttyTHS1 and ttyTHS3. Traffic only shows when the Pixhawk sends MAVLink on that port. On the tested board, **TELEM2 is ttyTHS1 at 921600**.
 
@@ -93,12 +100,13 @@ Notes:
 
 ## Tested
 
-Orin NX 16GB (P3767-0000) on a Holybro Pixhawk Jetson baseboard with a Pixhawk 6X (PX4 1.16), 2026-10-30:
+Orin NX 16GB (P3767-0000) on a Holybro Pixhawk Jetson baseboard with a Pixhawk 6X (PX4 1.16, then 1.17.0 for the DDS benchmark), 2026-10-30:
 
 | Check | Result |
 |---|---|
 | Boot from NVMe, `jetson-orin-nano-devkit-super`, 40 W mode | ✅ |
-| ttyTHS1 / ttyTHS3 in PIO mode, ttyTHS2 with DMA (as with Holybro's 6.2.2 patch) | ✅ |
+| ttyTHS1 / ttyTHS3 with DMA (no "PIO mode" in the kernel log), ttyTHS2 with DMA | ✅ |
+| PX4 uXRCE-DDS over ttyTHS1 at 921600 and 1.5 Mbaud with DMA, and over Ethernet UDP: full topic rates, no lost commands ([benchmark](docs/uxrce-dds-benchmark.md)) | ✅ |
 | ttyTHS1 ↔ Pixhawk TELEM2: MAVLink 2 at 921600 | ✅ |
 | ttyTHS3 | driver ✅, wiring unknown (no traffic from TELEM1/TELEM2) |
 | Ethernet (RTL8111, `r8168`), Pixhawk at 192.168.128.3: ping, DDS to :8888, MAVLink on :14550 | ✅ |
@@ -113,7 +121,8 @@ Boot log errors that also appear on Holybro's JetPack 6.2.2: IMX219 probe errors
 patches/   device-tree patch for L4T R39.2.1
 dtb/       prebuilt patched DTBs + SHA256SUMS
 scripts/   prepare, build, flash, NetworkManager watcher, link test
-docs/      analysis of Holybro's JetPack 6.2.2 patch and the port
+bench/     PX4 uXRCE-DDS link benchmark (runs on the Jetson) + results
+docs/      analysis of Holybro's JetPack 6.2.2 patch and the port, DDS link benchmark
 
 Local only (git-ignored):
 *.tbz2             the NVIDIA downloads
@@ -124,7 +133,7 @@ flash.log
 
 ## License
 
-- **Scripts** (`scripts/`) and documentation: MIT, see [LICENSE](LICENSE).
+- **Scripts** (`scripts/`, `bench/`) and documentation: MIT, see [LICENSE](LICENSE).
 - **Device-tree patch and DTBs** (`patches/`, `dtb/`): GPL-2.0-only, the license of NVIDIA's device-tree sources they're derived from. See [LICENSES/GPL-2.0-only.txt](LICENSES/GPL-2.0-only.txt).
 
 NVIDIA's BSP, rootfs and sources and Holybro's patch archive aren't included. They're under their own licenses;

@@ -28,6 +28,19 @@ So:
 The MB1 pinmux needs no change: `tegra234-mb1-bct-pinmux-p3767-dp-a03.dtsi` already sets `uart2_{tx,rx,rts,cts}_px4…px7`
 to `uartb`.
 
+## Deviation from Holybro: the UARTs keep DMA
+
+The port at first copied the change above exactly. It now differs on purpose:
+- **UARTA:** the `/delete-property/ dmas` / `dma-names` lines are dropped, so UARTA keeps NVIDIA's `<&gpcdma 8>`.
+- **UARTB:** gets `dmas = <&gpcdma 9>, <&gpcdma 9>`, `dma-names = "rx", "tx"` and `iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>`
+  (the SMMU stream UARTA and UARTE use).
+- **Request number:** 9 follows the Tegra234 GPC-DMA UART numbering; `tegra234.dtsi` has UARTA 8, UARTD 19, UARTE 20.
+
+Holybro doesn't say why it disabled DMA. The [uXRCE-DDS benchmark](uxrce-dds-benchmark.md) found PIO mode worse at every
+baud rate tested: higher CPU at 921600, and dropped messages with ~115 ms round trips at 1.5 Mbaud, where DMA runs at full rate.
+To get Holybro's behaviour back, add the two `/delete-property/` lines to `serial@3100000` and drop the three DMA
+properties from `serial@3110000`.
+
 ## Why it ports to R39.2.1 unchanged
 
 - `nv-platform/tegra234-p3768-0000+p3767-xxxx-nv-common.dtsi` still exists in R39.2.1. NVIDIA's R36.5→R39.2.1 changes to it
@@ -47,8 +60,8 @@ to `uartb`.
 
 - `scripts/build-dtbs.sh` builds `tegra234-p3768-0000+p3767-0000-nv-super.dtb` from unpatched R39.2.1 sources first. It aborts
   unless the result is byte-identical to NVIDIA's shipped DTB, which confirms the cpp/dtc build reproduces NVIDIA's.
-- The patched DTBs differ from NVIDIA's R39.2.1 DTBs only by the lines above. That matches Holybro's R36.5.0 change, apart
-  from one internal phandle value inside a deleted property.
+- The patched DTBs differ from NVIDIA's R39.2.1 DTBs only in the UARTB node (enabled as hsuart, with DMA and `iommus`) and
+  the `serial3`/`uartb` entries. UARTA is byte-for-byte NVIDIA's. The UART nodes match the DTB used in the DMA benchmark.
 
 ## Board config used for flashing
 

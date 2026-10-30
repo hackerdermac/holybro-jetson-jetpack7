@@ -1,0 +1,206 @@
+{
+ "label": "serial-pio-3000000",
+ "seconds": 30.0,
+ "total_msgs_s": 389.3,
+ "total_bytes_s": 36482,
+ "rtt_ms": {
+  "n": 295,
+  "lost": 0,
+  "p50": 413.5307520000424,
+  "p95": 424.0345549997073,
+  "p99": 426.05506899963075,
+  "max": 426.4468300007138
+ },
+ "agent_cpu_pct": 5.1,
+ "topics": {
+  "/fmu/out/airspeed_validated_v1": {
+   "msgs": 296,
+   "rate_hz": 9.86,
+   "bytes_s": 474,
+   "gap_max_ms": 501.6,
+   "jitter_ms": 23.39
+  },
+  "/fmu/out/arming_check_request_v1": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/battery_status_v1": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/collision_constraints": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/estimator_status_flags": {
+   "msgs": 27,
+   "rate_hz": 0.9,
+   "bytes_s": 94,
+   "gap_max_ms": 2018.8,
+   "jitter_ms": 322.25
+  },
+  "/fmu/out/failsafe_flags": {
+   "msgs": 54,
+   "rate_hz": 1.8,
+   "bytes_s": 173,
+   "gap_max_ms": 1091.9,
+   "jitter_ms": 74.1
+  },
+  "/fmu/out/gimbal_device_attitude_status": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/home_position_v1": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/manual_control_setpoint": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/message_format_response": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/mode_completed": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/position_setpoint_triplet": {
+   "msgs": 147,
+   "rate_hz": 4.9,
+   "bytes_s": 1352,
+   "gap_max_ms": 604.5,
+   "jitter_ms": 37.43
+  },
+  "/fmu/out/register_ext_component_reply": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/sensor_combined": {
+   "msgs": 2963,
+   "rate_hz": 98.75,
+   "bytes_s": 5135,
+   "gap_max_ms": 370.4,
+   "jitter_ms": 6.72
+  },
+  "/fmu/out/timesync_status": {
+   "msgs": 30,
+   "rate_hz": 1.0,
+   "bytes_s": 48,
+   "gap_max_ms": 1011.7,
+   "jitter_ms": 3.41
+  },
+  "/fmu/out/transponder_report": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/vehicle_attitude": {
+   "msgs": 2959,
+   "rate_hz": 98.61,
+   "bytes_s": 5522,
+   "gap_max_ms": 370.7,
+   "jitter_ms": 6.76
+  },
+  "/fmu/out/vehicle_command_ack": {
+   "msgs": 296,
+   "rate_hz": 9.86,
+   "bytes_s": 316,
+   "gap_max_ms": 496.6,
+   "jitter_ms": 23.73
+  },
+  "/fmu/out/vehicle_control_mode": {
+   "msgs": 296,
+   "rate_hz": 9.86,
+   "bytes_s": 276,
+   "gap_max_ms": 496.6,
+   "jitter_ms": 23.72
+  },
+  "/fmu/out/vehicle_global_position": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/vehicle_gps_position": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/vehicle_land_detected": {
+   "msgs": 30,
+   "rate_hz": 1.0,
+   "bytes_s": 24,
+   "gap_max_ms": 1010.2,
+   "jitter_ms": 1.55
+  },
+  "/fmu/out/vehicle_local_position_v1": {
+   "msgs": 1477,
+   "rate_hz": 49.22,
+   "bytes_s": 10829,
+   "gap_max_ms": 379.8,
+   "jitter_ms": 9.54
+  },
+  "/fmu/out/vehicle_odometry": {
+   "msgs": 2957,
+   "rate_hz": 98.55,
+   "bytes_s": 11826,
+   "gap_max_ms": 370.4,
+   "jitter_ms": 6.79
+  },
+  "/fmu/out/vehicle_status_v1": {
+   "msgs": 148,
+   "rate_hz": 4.93,
+   "bytes_s": 414,
+   "gap_max_ms": 611.0,
+   "jitter_ms": 34.05
+  },
+  "/fmu/out/vtol_vehicle_status": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  },
+  "/fmu/out/wind": {
+   "msgs": 0,
+   "rate_hz": 0.0,
+   "bytes_s": 0,
+   "gap_max_ms": null,
+   "jitter_ms": null
+  }
+ }
+}
